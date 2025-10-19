@@ -44,7 +44,7 @@ public class Singlelist <Anydatatype> {
           else{
               Node temp = head;
               while(temp != null){
-                  System.err.print(temp.data + "--> ");
+                  System.out.print(temp.data + "--> ");
                   temp = temp.next;
               }
               System.out.println("null");
@@ -61,31 +61,58 @@ public class Singlelist <Anydatatype> {
           }
       }
         
+        public int getSize() {
+          return size;
+       }
+
+        
         public void deletefirst(){
             if(head==null){
                 System.out.println("List is empty");
             }
             else{
                 head  = head.next;
+                if(head == null){
+                    tail = null;
+                }
+                size--;
             }
         }
         
+//        public void deletelast(){
+//            if(head==null){
+//                System.out.println("List is empty");
+//            }
+//            else{
+//                Node temp = head;
+//                Node nextnode = temp.next;
+//                while(nextnode.next != null){
+//                    temp = nextnode;
+//                    nextnode= nextnode.next;
+//                }
+//                temp.next = null;
+//            }
+//            size++;
+//        }
+        
         public void deletelast(){
-            if(head==null){
-                System.out.println("List is empty");
-            }
-            else{
-                Node temp = head;
-                Node nextnode = temp.next;
-                while(nextnode.next != null){
-                    temp = nextnode;
-                    nextnode= nextnode.next;
-                }
-                temp.next = null;
-            }
-            size++;
+             if(head == null){
+             System.out.println("List is empty");
+    } else if (head.next == null) {
+        // Only one element
+        head = null;
+        tail = null;
+    } else {
+        Node temp = head;
+        while(temp.next.next != null){
+            temp = temp.next;
         }
-      
+        temp.next = null;
+        tail = temp;
+    }
+    size--;
+}
+
     public static void main(String[] args) {
         Singlelist<String> list = new Singlelist<>(); 
         System.out.println("list is created!");

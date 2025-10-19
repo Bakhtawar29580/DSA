@@ -1,6 +1,7 @@
 package com.mycompany.arraytraversal;
 
 public class ArrayTraversal {
+    
     public static void main(String[] args) {
         int[] arr = {5, 10, 15, 20, 25, 30};
 
@@ -9,5 +10,6 @@ public class ArrayTraversal {
             System.out.print(arr[i] + " ");
         }
     }
+    
 }
 
