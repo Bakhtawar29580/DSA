@@ -7,72 +7,68 @@ public class ArrayManager {
     int size;   
         
     public ArrayManager(int capacity){
-            this.capacity = capacity;
-            arr = new int[capacity];
-            size = 0;
+        this.capacity = capacity;
+        arr = new int[capacity];
+        size = 0;
     }
 
     public void insert(int value){
-            if(size < capacity){
-                arr[size] = value;
-                size++;
-        }
-        else{
+        if(size < capacity){
+            arr[size] = value;
+            size++;
+        } else {
             System.out.println("Array is full!");
-          }
-       }      
+        }
+    }      
     
     public void delete(int index){
         if(index < 0 || index >= size){
-              System.out.println("Array invalid");
-              return;
+            System.out.println("Invalid index!");
+            return;
         }
-        for(int i = index; i < size - 1 ;i++){
-           arr[i] = arr[i+1];          
-      }
-       size--;
+        for(int i = index; i < size - 1; i++){
+            arr[i] = arr[i + 1];
+        }
+        size--;
     }
     
     public void display(){
-        System.out.print("Elements in array:");
-        for(int i = 0; i < size;i++){
-             System.out.print(arr[i] + " ");
+        for(int i = 0; i < size; i++){
+            System.out.print(arr[i] + " ");
         }
         System.out.println();
     }
     
     public void sort(){      
-        for(int i = 0; i <size -1;i++){
-            for(int j = 0; j <size -1;j++){
-                if(arr[j] > arr[j+1]){
-                int temp = arr[j];
-                arr[j] = arr[j+1];
-                arr[j+1] = temp;
-            }           
-          }          
+        for(int i = 0; i < size - 1; i++){
+            for(int j = 0; j < size - 1 - i; j++){
+                if(arr[j] > arr[j + 1]){
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                }           
+            }          
         }
     }
     
     public static void main(String[] args) {
-        ArrayManager array = new ArrayManager(4);
-        array.insert(10);
-        array.insert(25);
-        array.insert(23);
-        array.insert(15);
-        array.insert(17);  // Will print "Array is full!"
-        System.out.println();
+        ArrayManager marks = new ArrayManager(5);
         
-        System.out.println("Array after insertion:");
-        array.display();
-        System.out.println();
-
-        array.delete(3); // deletes element at index 3 (value 25)
-        System.out.println("Array after deletion:");
-        array.display();
-        System.out.println();
-
-        array.sort();
-        System.out.println("Array after sorting:");
-        array.display();
+        marks.insert(78);
+        marks.insert(85);
+        marks.insert(69);
+        marks.insert(90);
+        marks.insert(56);
+        
+        System.out.print("Marks after insertion: ");
+        marks.display();
+        
+        marks.delete(2); // delete element at index 2 (value 69)
+        System.out.print("After deleting element at index 2: ");
+        marks.display();
+        
+        marks.sort();
+        System.out.print("After sorting: ");
+        marks.display();
     }
 }
