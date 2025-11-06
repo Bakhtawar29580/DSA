@@ -1,54 +1,53 @@
 package com.mycompany.singlylinked;
 
-public class SinglyLinked <datatype> {
+public class SinglyLinked {    
     Node head;
     Node tail;
     int size;
     
     public SinglyLinked(){
-        this.head = head;
-        this.tail = tail;
+        this.head = null;
+        this.tail = null;
         this.size = 0;
     }
     
     class Node{
-        datatype data;
+        int data;
         Node next;
-        Node(datatype data){
+        
+        public Node(int data){           
             this.data = data;
             this.next = null;
         }
     }
     
-    public void addfirst(datatype data){
+    void addfirst(int data){
+            Node temp = new Node(data);
+            if(head == null){
+                head = temp;
+                tail = temp;
+        } else{
+                temp.next = head;
+                head = temp;
+            }
+            size++;
+    }
+    
+    void addlast(int data){
         Node temp = new Node(data);
         if(head == null){
             head = temp;
             tail = temp;
-        }
-        else{
-            temp.next = head;
-            head = temp;
-        }
+        } else{
+                tail.next = temp;
+                tail = temp;
+            }
         size++;
     }
-    
-    public void addlast(datatype data){
-        Node temp = new Node(data);
+
+    void deletefirst(){
         if(head == null){
-            head = temp;
-            tail = temp;
-        }
-        else{
-            tail.next = temp;
-            tail = temp;
-        }
-        size++;
-    }
-    
-    public void deletefirst(){
-        if(head == null){
-            System.out.println("List is epmty!");
+            System.out.println("List is empty!");
         } else{
             head = head.next;
             if(head == null){
@@ -58,9 +57,9 @@ public class SinglyLinked <datatype> {
         }
     }
     
-    public void deletelast(){
-        if(head == null){
-            System.out.println("List is empty");
+    void deletelast(){
+        if(head==null){
+            System.out.println("List is empty!");
             return;
         } else if(head.next == null){
             head = null;
@@ -77,35 +76,30 @@ public class SinglyLinked <datatype> {
     }
     
     public void display(){
-        if(head == null){
-            System.out.println("Theres no any node");
-        }
-        else{
+        if(head==null){
+            System.out.println("There are no nodes!");
+        } else{
             Node temp = head;
-            while(temp != null){
-                System.out.println(temp.data + "-->");
-                temp = temp.next;
+            while(temp!= null){
+               System.out.print( temp.data + " --> ");
+               temp = temp.next;
             }
-            System.out.println("null");
+            System.out.println(" null ");
         }
     }
-
+    
     public static void main(String[] args) {
-        SinglyLinked<String> list = new SinglyLinked<>();
-        System.out.println("List is created!");
+        SinglyLinked list = new SinglyLinked();
         
-        System.out.println();
-        
-        list.addfirst("Manal");
-        list.addlast("Lodhi");
-        list.addfirst("Bakhtawar");
-        list.addlast("Khan");
-        
+        list.addfirst(23);
+        list.addlast(45);
+        list.addlast(65);
+        list.addlast(11);
+        System.out.print("After adding customers: ");
         list.display();
-        
         list.deletefirst();
         list.deletelast();
-        
+        System.out.print("After deleting first and last customers: ");
         list.display();
     }
 }
