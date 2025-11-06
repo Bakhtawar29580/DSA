@@ -79,32 +79,16 @@ public class Singlelist <Anydatatype> {
             }
         }
         
-//        public void deletelast(){
-//            if(head==null){
-//                System.out.println("List is empty");
-//            }
-//            else{
-//                Node temp = head;
-//                Node nextnode = temp.next;
-//                while(nextnode.next != null){
-//                    temp = nextnode;
-//                    nextnode= nextnode.next;
-//                }
-//                temp.next = null;
-//            }
-//            size++;
-//        }
-        
-        public void deletelast(){
-             if(head == null){
-             System.out.println("List is empty");
+    public void deleteLast() {
+    if (head == null) {
+        System.out.println("List is empty");
+        return;
     } else if (head.next == null) {
-        // Only one element
         head = null;
         tail = null;
     } else {
         Node temp = head;
-        while(temp.next.next != null){
+        while (temp.next.next != null) {
             temp = temp.next;
         }
         temp.next = null;
@@ -129,7 +113,7 @@ public class Singlelist <Anydatatype> {
         System.out.println();
         
         list.display();
-        list.deletelast();
+        list.deleteLast();
         
         list.display();
         list.deletefirst();
