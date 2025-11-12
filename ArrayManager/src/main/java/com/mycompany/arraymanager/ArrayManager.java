@@ -20,7 +20,7 @@ public class ArrayManager {
             System.out.println("Array is full!");
         }
     }      
-    
+     
     public void delete(int index){
         if(index < 0 || index >= size){
             System.out.println("Invalid index!");
@@ -31,7 +31,7 @@ public class ArrayManager {
         }
         size--;
     }
-    
+     
     public void display(){
         for(int i = 0; i < size; i++){
             System.out.print(arr[i] + " ");
@@ -50,7 +50,7 @@ public class ArrayManager {
             }          
         }
     }
-    
+        
     public static void main(String[] args) {
         ArrayManager marks = new ArrayManager(5);
         

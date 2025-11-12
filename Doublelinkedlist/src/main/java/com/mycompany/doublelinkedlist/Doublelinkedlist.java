@@ -1,13 +1,25 @@
 package com.mycompany.doublelinkedlist;
 
 public class Doublelinkedlist {
-
     Node head;
     Node tail;
     
     public Doublelinkedlist(){
         this.head = null;
         this.tail = null;
+    }
+    
+    private class Node {
+        int data;
+        Node next;
+        Node prev;
+
+        // Constructor for Node
+        Node(int data, Node next, Node prev) {
+            this.data = data;
+            this.next = next;
+            this.prev = prev;
+        }
     }
     
     public void addfirst(int data){
@@ -60,21 +72,6 @@ public class Doublelinkedlist {
             System.out.println("null");
         }
     }
-
-    // Inner class Node
-    private class Node {
-        int data;
-        Node next;
-        Node prev;
-
-        // Constructor for Node
-        Node(int data, Node next, Node prev) {
-            this.data = data;
-            this.next = next;
-            this.prev = prev;
-        }
-    }
-    
    
     public static void main(String[] args) {
         Doublelinkedlist marks = new Doublelinkedlist();

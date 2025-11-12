@@ -11,6 +11,16 @@ public class Singlelist <Anydatatype> {
           this.size = 0;
       }
       
+      private class Node {
+          Anydatatype data;
+          Node next;
+          
+          public Node(Anydatatype data, Node next){
+              this.data = data;
+              this.next = next;
+          }
+      }
+      
       public void addfirst(Anydatatype data){
           Node temp = new Node(data,null);
           if(head==null){
@@ -50,22 +60,11 @@ public class Singlelist <Anydatatype> {
               System.out.println("null");
           }
       }
-      
-        private class Node {
-          Anydatatype data;
-          Node next;
-          
-          public Node(Anydatatype data, Node next){
-              this.data = data;
-              this.next = next;
-          }
-      }
-        
+       
         public int getSize() {
           return size;
        }
-
-        
+       
         public void deletefirst(){
             if(head==null){
                 System.out.println("List is empty");

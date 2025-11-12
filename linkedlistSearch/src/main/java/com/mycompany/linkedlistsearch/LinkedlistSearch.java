@@ -37,11 +37,9 @@ public class LinkedlistSearch {
         current = current.next;
         position++;
     }
-
     System.out.println("Value " + target + " not found in the list");
 }
-
-
+    
     public void deleteFromStart(){
         if(head == null){
             System.out.println("List is empty!");
