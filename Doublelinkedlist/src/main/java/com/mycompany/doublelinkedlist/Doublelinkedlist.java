@@ -48,14 +48,13 @@ public class Doublelinkedlist {
     }
     
      public void deletefirst(){
-        Node temp = head;
         if(head == null){
             System.out.println("No list Exists");
     }
         else{
-            temp = temp.next;
-            head = temp;
-            head.prev = null;
+            head = head.next;
+            head.prev = tail;
+            tail.next = head;
         }
     }
     
