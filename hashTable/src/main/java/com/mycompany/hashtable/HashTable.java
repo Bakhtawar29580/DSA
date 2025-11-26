@@ -77,6 +77,42 @@ public class HashTable {
              System.out.println();
          }
      }
+     
+     public void remove(int key) {
+    int index = Hash_Table(key);
+    HashNode temp = table[index];
+    HashNode prev = null;
+
+    // Case: bucket empty
+    if (temp == null) {
+        System.out.println("Key not found");
+        return;
+    }
+
+    // Case 1: key found at beginning of chain
+    if (temp.key == key) {
+        table[index] = temp.next;  // remove head
+        System.out.println("Key " + key + " removed");
+        return;
+    }
+
+    // Case 2 & 3: key in middle or end
+    while (temp != null && temp.key != key) {
+        prev = temp;
+        temp = temp.next;
+    }
+
+    // key not found
+    if (temp == null) {
+        System.out.println("Key not found");
+        return;
+    }
+
+    // Remove the node
+    prev.next = temp.next;
+    System.out.println("Key " + key + " removed");
+}
+
 
     public static void main(String[] args) {
          HashTable ht = new HashTable(5);
@@ -86,5 +122,9 @@ public class HashTable {
          ht.put(0, "Maryam");
          ht.print();
          System.out.println("Value is: " + ht.Search(1));
+         
+         ht.remove(0);
+         ht.remove(6);
+         ht.print();
     }
 }
