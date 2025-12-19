@@ -1,6 +1,6 @@
 package com.mycompany.mavenproject4;
 
-public class Mavenproject4 {
+public class array_remove {
    
     public static int remove(int[] arr, int size, int index) {
         if (index < 0 || index >= size) {

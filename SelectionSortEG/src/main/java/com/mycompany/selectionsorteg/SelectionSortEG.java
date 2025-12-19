@@ -30,19 +30,21 @@ public class SelectionSortEG {
             arr[i] = temp;
         }
     }
-
+ 
     public static void main(String[] args) {
         SelectionSortEG sort = new SelectionSortEG();
+        
         int[] marks = {99,34,54,67,12,2,89};
         sort.SelectionSort(marks);
+        
         for(int arr1: marks){
                System.out.println(arr1);           
         }
      
-        String[] arr2 = {"Manal", "Maryam", "Omaiyann", "Bakhtawar"};
+        String[] arr2 = {"Bat", "Cat", "Ant", "Dog"};
         sort.SelectionSortString(arr2);
         for(String arr3: arr2){
-               System.out.println(arr3);           
+               System.out.println(arr3); 
         }
     }
 }

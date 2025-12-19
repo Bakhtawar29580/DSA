@@ -1,15 +1,14 @@
 package com.mycompany.sortarray;
 
-import java.util.Arrays;  // ✅ import Arrays class
+import java.util.Arrays;  
 
 public class SortArray {
 
     // Function to sort using built-in method
     public static void sortArray(int[] arr, int n) {
-        Arrays.sort(arr, 0, n); // ✅ use Arrays.sort
+        Arrays.sort(arr, 0, n); // 
     }
 
-    // Function to print array
     public static void printArray(int[] arr, int n) {
         for (int i = 0; i < n; i++) {
             System.out.print(arr[i] + " ");
