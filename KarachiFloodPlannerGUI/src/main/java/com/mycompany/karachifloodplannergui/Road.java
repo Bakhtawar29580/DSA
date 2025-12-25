@@ -5,8 +5,9 @@ class Road {
     int distance;
     boolean isFlooded = false;
 
-    public Road(Intersection to, int distance) {
+    Road(Intersection to, int distance) {
         this.to = to;
         this.distance = distance;
     }
 }
+

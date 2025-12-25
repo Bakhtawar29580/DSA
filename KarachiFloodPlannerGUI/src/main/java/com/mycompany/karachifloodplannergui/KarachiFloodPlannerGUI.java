@@ -2,81 +2,65 @@ package com.mycompany.karachifloodplannergui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 
-/**
- * Karachi Flood Route Planner
- */
 public class KarachiFloodPlannerGUI extends JFrame {
-    
-    boolean simulationStarted = false;
 
-
-    // ================= DATA STRUCTURES =================
-    static class Road {
-        Intersection to;
-        int distance;
-        boolean isFlooded;
-
-        Road(Intersection to, int distance) {
-            this.to = to;
-            this.distance = distance;
-            this.isFlooded = false;
-        }
-    }
-
-    static class Intersection {
-        String name;
-        int x, y;
-        java.util.List<Road> roads = new ArrayList<>();
-
-        Intersection(String name, int x, int y) {
-            this.name = name;
-            this.x = x;
-            this.y = y;
-        }
-
-        void addRoad(Road r) {
-            roads.add(r);
-        }
-    }
-
-    static class IntersectionDistance implements Comparable<IntersectionDistance> {
-        Intersection intersection;
-        int distance;
-
-        IntersectionDistance(Intersection i, int d) {
-            intersection = i;
-            distance = d;
-        }
-
-        public int compareTo(IntersectionDistance o) {
-            return Integer.compare(this.distance, o.distance);
-        }
-    }
-
-    // ================= VARIABLES =================
-    HashMap<String, Intersection> map = new HashMap<>();
-
-    JPanel mapPanel;
     JComboBox<String> startBox, endBox;
-    JTextArea infoArea;
+    JButton findRouteBtn;
+    JTextArea output;
+    JPanel mapPanel;
 
-    double scale = 1.0;
-    int offsetX = 0, offsetY = 0;
+    HashMap<String, Intersection> map = new HashMap<>();
+    List<String> safestPath = null;
+    boolean analyzed = false;
 
-    java.util.List<String> safestPath = null;
 
-    // ================= CONSTRUCTOR =================
     public KarachiFloodPlannerGUI() {
+
         setTitle("Karachi Flood Route Planner");
-        setSize(1200, 800);
+        setSize(1000, 650);
+        setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
+        setLayout(new BorderLayout(10, 10));
 
         initializeGraph();
         randomFlood();
+
+        // ================= TITLE =================
+        JLabel title = new JLabel("Karachi Flood Route Planner", JLabel.CENTER);
+        title.setFont(new Font("Arial", Font.BOLD, 24));
+        title.setForeground(new Color(0, 102, 204));
+        title.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        add(title, BorderLayout.NORTH);
+
+        // ================= LEFT PANEL =================
+        JPanel controlPanel = new JPanel(new GridLayout(7, 1, 10, 10));
+        controlPanel.setBorder(BorderFactory.createTitledBorder("Route Selection"));
+
+        startBox = new JComboBox<>();
+        endBox = new JComboBox<>();
+
+        startBox.addItem("Select Start Location");
+        endBox.addItem("Select Destination");
+
+        for (String loc : map.keySet()) {
+            startBox.addItem(loc);
+            endBox.addItem(loc);
+        }
+
+        findRouteBtn = new JButton("Find Safe Route");
+        findRouteBtn.setBackground(new Color(0, 153, 76));
+        findRouteBtn.setForeground(Color.WHITE);
+
+        controlPanel.add(new JLabel("Start Location:"));
+        controlPanel.add(startBox);
+        controlPanel.add(new JLabel("Destination:"));
+        controlPanel.add(endBox);
+        controlPanel.add(findRouteBtn);
+
+        add(controlPanel, BorderLayout.WEST);
 
         // ================= MAP PANEL =================
         mapPanel = new JPanel() {
@@ -85,108 +69,107 @@ public class KarachiFloodPlannerGUI extends JFrame {
                 drawMap((Graphics2D) g);
             }
         };
-        mapPanel.setBackground(Color.WHITE);
+        mapPanel.setBorder(BorderFactory.createTitledBorder("City Map"));
         add(mapPanel, BorderLayout.CENTER);
 
-        // ================= TOP PANEL =================
-        JPanel top = new JPanel();
+        // ================= BOTTOM =================
+        output = new JTextArea(4, 20);
+        output.setEditable(false);
+        output.setBorder(BorderFactory.createTitledBorder("Output"));
 
-        startBox = new JComboBox<>();
-        endBox = new JComboBox<>();
+        JPanel legend = new JPanel(new GridLayout(1, 3));
+        legend.add(new JLabel("🟢 Safe Road"));
+        legend.add(new JLabel("🔴 Flooded Road"));
+        legend.add(new JLabel("🔥 Safest Route"));
 
-        startBox.addItem("Select Start");
-        endBox.addItem("Select Destination");
+        JPanel bottom = new JPanel(new BorderLayout());
+        bottom.add(new JScrollPane(output), BorderLayout.CENTER);
+        bottom.add(legend, BorderLayout.SOUTH);
 
-        for (String name : map.keySet()) {
-            startBox.addItem(name);
-            endBox.addItem(name);
-        }
-
-        JButton findBtn = new JButton("Find Safest Route");
-
-        top.add(new JLabel("Start:"));
-        top.add(startBox);
-        top.add(new JLabel("End:"));
-        top.add(endBox);
-        top.add(findBtn);
-
-        add(top, BorderLayout.NORTH);
-
-        // ================= BOTTOM PANEL =================
-        infoArea = new JTextArea(5, 30);
-        infoArea.setEditable(false);
-        infoArea.setLineWrap(true);
-        infoArea.setWrapStyleWord(true);
-
-        add(new JScrollPane(infoArea), BorderLayout.SOUTH);
+        add(bottom, BorderLayout.SOUTH);
 
         // ================= BUTTON ACTION =================
-        findBtn.addActionListener(e -> findSafestRoute());
-
-        setVisible(true);
+        findRouteBtn.addActionListener(e -> findSafestRoute());
     }
 
-    // ================= GRAPH SETUP =================
+    // ================= GRAPH =================
     void connect(Intersection a, Intersection b, int d) {
-        a.addRoad(new Road(b, d));
-        b.addRoad(new Road(a, d));
+        a.roads.add(new Road(b, d));
+        b.roads.add(new Road(a, d));
     }
 
     void initializeGraph() {
-        Intersection gulshan = new Intersection("Gulshan", 400, 200);
-        Intersection pechs = new Intersection("PECHS", 600, 200);
-        Intersection bahadurabad = new Intersection("Bahadurabad", 400, 400);
-        Intersection saddar = new Intersection("Saddar", 600, 400);
 
-        connect(gulshan, pechs, 5);
-        connect(gulshan, bahadurabad, 7);
-        connect(pechs, saddar, 6);
-        connect(bahadurabad, saddar, 4);
+    Intersection gulshan = new Intersection("Gulshan", 250, 180);
+    Intersection pechs = new Intersection("PECHS", 380, 180);
+    Intersection bahadurabad = new Intersection("Bahadurabad", 250, 300);
+    Intersection saddar = new Intersection("Saddar", 380, 300);
+    Intersection clifton = new Intersection("Clifton", 520, 360);
+    Intersection lyari = new Intersection("Lyari", 150, 350);
+    Intersection korangi = new Intersection("Korangi", 550, 200);
+    Intersection north = new Intersection("North Karachi", 380, 80);
 
-        map.put(gulshan.name, gulshan);
-        map.put(pechs.name, pechs);
-        map.put(bahadurabad.name, bahadurabad);
-        map.put(saddar.name, saddar);
-    }
+    connect(gulshan, pechs, 5);
+    connect(gulshan, bahadurabad, 6);
+    connect(pechs, saddar, 4);
+    connect(bahadurabad, saddar, 3);
+    connect(saddar, clifton, 7);
+    connect(lyari, saddar, 5);
+    connect(gulshan, north, 6);
+    connect(pechs, korangi, 8);
+    connect(clifton, korangi, 4);
+
+    map.put(gulshan.name, gulshan);
+    map.put(pechs.name, pechs);
+    map.put(bahadurabad.name, bahadurabad);
+    map.put(saddar.name, saddar);
+    map.put(clifton.name, clifton);
+    map.put(lyari.name, lyari);
+    map.put(korangi.name, korangi);
+    map.put(north.name, north);
+}
+
 
     // ================= DRAW MAP =================
     void drawMap(Graphics2D g) {
-        g.setStroke(new BasicStroke(2));
 
-        // Roads
-        for (Intersection i : map.values()) {
-            for (Road r : i.roads) {
-                if (!simulationStarted) {
-                      g.setColor(Color.LIGHT_GRAY);   // initial state
-                } else if (r.isFlooded) {
-                      g.setColor(Color.RED);          // flooded
-                } else {
-                      g.setColor(Color.YELLOW);       // normal safe road
-                }
+    for (Intersection i : map.values()) {
+        for (Road r : i.roads) {
 
-                g.drawLine(i.x, i.y, r.to.x, r.to.y);
+            if (!analyzed) {
+                g.setColor(Color.LIGHT_GRAY);   // Initial state
+            } 
+            else if (r.isFlooded) {
+                g.setColor(Color.RED);         // Flooded
+            } 
+            else {
+                g.setColor(Color.YELLOW);       // Safe road
             }
-        }
 
-        // Safest Path
-        if (safestPath != null) {
-            g.setColor(Color.BLUE);
-            g.setStroke(new BasicStroke(4));
-            for (int i = 0; i < safestPath.size() - 1; i++) {
-                Intersection a = map.get(safestPath.get(i));
-                Intersection b = map.get(safestPath.get(i + 1));
-                g.drawLine(a.x, a.y, b.x, b.y);
-            }
-        }
-
-        // Nodes
-        for (Intersection i : map.values()) {
-            g.setColor(Color.BLUE);
-            g.fillOval(i.x - 6, i.y - 6, 12, 12);
-            g.setColor(Color.BLACK);
-            g.drawString(i.name, i.x - 30, i.y - 10);
+            g.drawLine(i.x, i.y, r.to.x, r.to.y);
         }
     }
+
+    // Safest Route
+    if (safestPath != null) {
+        g.setStroke(new BasicStroke(4));
+        g.setColor(Color.GREEN);
+        for (int i = 0; i < safestPath.size() - 1; i++) {
+            Intersection a = map.get(safestPath.get(i));
+            Intersection b = map.get(safestPath.get(i + 1));
+            g.drawLine(a.x, a.y, b.x, b.y);
+        }
+        g.setStroke(new BasicStroke(1));
+    }
+
+    // Draw nodes
+    for (Intersection i : map.values()) {
+        g.setColor(Color.BLACK);
+        g.fillOval(i.x - 5, i.y - 5, 10, 10);
+        g.drawString(i.name, i.x - 30, i.y - 10);
+    }
+}
+
 
     // ================= LOGIC =================
     void randomFlood() {
@@ -197,62 +180,61 @@ public class KarachiFloodPlannerGUI extends JFrame {
     }
 
     void findSafestRoute() {
-        simulationStarted = true;
-        randomFlood();
-        safestPath = null;
 
-        String start = (String) startBox.getSelectedItem();
-        String end = (String) endBox.getSelectedItem();
+    analyzed = true;
+    randomFlood();
 
-        if (start.startsWith("Select") || end.startsWith("Select")) {
-            infoArea.setText("Please select both start and destination.");
-            repaint();
-            return;
-        }
+    String start = (String) startBox.getSelectedItem();
+    String end = (String) endBox.getSelectedItem();
 
-        HashMap<String, Integer> dist = new HashMap<>();
-        HashMap<String, String> prev = new HashMap<>();
-        PriorityQueue<IntersectionDistance> pq = new PriorityQueue<>();
+    if (start.equals(end)) {
+        output.setText("Start and destination cannot be same.");
+        return;
+    }
 
-        for (String k : map.keySet())
-            dist.put(k, Integer.MAX_VALUE);
+    HashMap<String, Integer> dist = new HashMap<>();
+    HashMap<String, String> prev = new HashMap<>();
+    PriorityQueue<String> pq = new PriorityQueue<>(Comparator.comparingInt(dist::get));
 
-        dist.put(start, 0);
-        pq.add(new IntersectionDistance(map.get(start), 0));
+    for (String k : map.keySet())
+        dist.put(k, Integer.MAX_VALUE);
 
-        while (!pq.isEmpty()) {
-            Intersection u = pq.poll().intersection;
-            for (Road r : u.roads) {
-                if (r.isFlooded) continue;
-                int nd = dist.get(u.name) + r.distance;
-                if (nd < dist.get(r.to.name)) {
-                    dist.put(r.to.name, nd);
-                    prev.put(r.to.name, u.name);
-                    pq.add(new IntersectionDistance(r.to, nd));
-                }
+    dist.put(start, 0);
+    pq.add(start);
+
+    while (!pq.isEmpty()) {
+        String u = pq.poll();
+        for (Road r : map.get(u).roads) {
+            if (r.isFlooded) continue;
+            int nd = dist.get(u) + r.distance;
+            if (nd < dist.get(r.to.name)) {
+                dist.put(r.to.name, nd);
+                prev.put(r.to.name, u);
+                pq.add(r.to.name);
             }
         }
+    }
 
-        if (dist.get(end) == Integer.MAX_VALUE) {
-            infoArea.setText("No safe route available. All paths flooded.");
-            repaint();
-            return;
-        }
-
+    if (dist.get(end) == Integer.MAX_VALUE) {
+        safestPath = null;
+        output.setText("No safe route available (all paths flooded).");
+    } else {
         safestPath = new ArrayList<>();
         for (String at = end; at != null; at = prev.get(at))
             safestPath.add(0, at);
 
-        infoArea.setText(
-                "Safest Route: " + safestPath +
-                "\nTotal Distance: " + dist.get(end) + " km"
+        output.setText(
+            "Safest Route:\n" + safestPath +
+            "\nTotal Distance: " + dist.get(end) + " km"
         );
-
-        repaint();
     }
+
+    mapPanel.repaint();
+}
+
 
     // ================= MAIN =================
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(KarachiFloodPlannerGUI::new);
+        SwingUtilities.invokeLater(() -> new KarachiFloodPlannerGUI().setVisible(true));
     }
 }

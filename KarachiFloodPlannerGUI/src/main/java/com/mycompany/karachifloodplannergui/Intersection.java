@@ -8,14 +8,9 @@ class Intersection {
     int x, y;
     List<Road> roads = new ArrayList<>();
 
-    public Intersection(String name, int x, int y) {
+    Intersection(String name, int x, int y) {
         this.name = name;
         this.x = x;
         this.y = y;
     }
-
-    public void addRoad(Road r) {
-        roads.add(r);
-    }
 }
-
