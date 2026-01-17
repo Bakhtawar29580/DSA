@@ -69,13 +69,9 @@ public class StackLinkedList {
         stack.push(12);
         stack.push(14);
         stack.push(45);
-
         stack.display();
-
         System.out.println("Peek: " + stack.peek()); 
-
         System.out.println("Pop: " + stack.pop());   
-
         stack.display(); 
     }
 }

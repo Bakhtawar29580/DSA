@@ -65,7 +65,6 @@ public class QueueArray {
             return;
         }
         int data = front;    // starting from front till rear
-        //System.out.println("Queue");
         while(true){
             System.out.println(queue[data] + " ");
             if(rear == data)break;
@@ -73,7 +72,6 @@ public class QueueArray {
             }
             System.out.println();
     }
-
     public static void main(String[] args) {
         QueueArray q = new QueueArray(5);
         q.enqueue(30);

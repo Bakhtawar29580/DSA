@@ -1,11 +1,9 @@
 package com.mycompany.linkedlistmanager;
 
-public class Linkedlistmanager {   
-    
+public class Linkedlistmanager {      
     Node head;
     Node tail;
-    int size;
-    
+    int size;   
     public Linkedlistmanager(){
         this.head = null;
         this.tail = null;
@@ -20,15 +18,14 @@ public class Linkedlistmanager {
             this.data = data;
             this.next = null;
         }
-    }
-    
+    }  
     void addfirst(int data){
         Node temp = new Node(data);
         if(head==null){
             head = temp;
             tail = temp;
         } else{
-            temp.next = head; //corrected
+            temp.next = head; 
             head = temp;
         }
         size++;

@@ -1,8 +1,6 @@
 package com.mycompany.arrayoperations;
 import java.util.Arrays;
-
 public class ArrayOperations {
-
     // Function 1: Insert at a specific index
     public static int[] insertAtIndex(int[] arr, int index, int element) {
         int[] newArr = new int[arr.length + 1];
